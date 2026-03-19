@@ -143,7 +143,8 @@ action:
           - service: light.turn_on
             target: "{{ lights[states(current_light)] }}"
             data:
-                brightness_step_pct: "{{ [state_attr(lights[states(current_light)], 'brightness') / 2.55 - step_size * dim_scale, 10] | max }}"
+                brightness_pct: >
+                    "{{ [state_attr(lights[states(current_light)], 'brightness') / 2.55 - step_size * dim_scale, 10] | max }}"
                 transition: 1
   - choose:
     # Last used light state
