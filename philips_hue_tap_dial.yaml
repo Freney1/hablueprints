@@ -140,12 +140,16 @@ action:
           - "{{ event == 'step_with_on_off' }}"
           - "{{ step_mode == 'StepMode.Down' }}"
         sequence:
-          - service: light.turn_on
-            target: "{{ lights[states(current_light)] }}"
-            data:
-                brightness_pct: >
-                    "{{ [state_attr(lights[states(current_light)], 'brightness') / 2.55 - step_size * dim_scale, 10] | max }}"
-                transition: 1
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ state_attr('light.your_group', 'brightness') | int > 26 }}"
+                  sequence:
+                    - service: light.turn_on
+                      target: "{{ lights[states(current_light)] }}"
+                      data:
+                          brightness_step_pct: "{{ -step_size * dim_scale }}"
+                          transition: 1
   - choose:
     # Last used light state
       - conditions:
